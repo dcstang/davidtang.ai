@@ -21,8 +21,9 @@ gcloud run deploy ${SERVICE_NAME} \
   --region ${REGION} \
   --allow-unauthenticated \
   --port 8080 \
-  --memory 512Mi \
-  --cpu 1 \
-  --max-instances 10
+  --memory 128Mi \
+  --cpu 0.083 \
+  --max-instances 10 \
+  --execution-environment gen1
 
 echo "Deployment complete!"
