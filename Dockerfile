@@ -21,7 +21,7 @@ FROM golang:1.21-alpine AS go-build
 WORKDIR /app
 
 # Copy Go modules
-COPY go.mod go.sum ./
+COPY go.mod ./
 
 # Download dependencies
 RUN go mod download
