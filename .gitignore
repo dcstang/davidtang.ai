@@ -98,3 +98,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+
+url-map*
+*.md

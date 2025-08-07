@@ -1,5 +1,6 @@
 <script>
-  const profilePhotoUrl = "/src/assets/headshot-skyblue.png";
+  import headshotImage from "./assets/headshot-skyblue.png";
+  const profilePhotoUrl = headshotImage;
 
   const linkedinUrl = "https://linkedin.com/in/drdavidtang";
   const youtubeUrl = "https://youtube.com/drdavidtang";
