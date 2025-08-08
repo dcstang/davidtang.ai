@@ -1,0 +1,25 @@
+name: Test Docker Build
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build Docker image
+      run: docker build -t davidtang-ai .
+    
+    - name: Test container startup
+      run: |
+        docker run -d --name test-container -p 8080:8080 davidtang-ai
+        sleep 5
+        curl -f http://localhost:8080/api/content || exit 1
+        docker stop test-container
+        docker rm test-container 

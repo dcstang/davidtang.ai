@@ -1,5 +1,5 @@
 # Build stage for Svelte
-FROM node:18-alpine as build
+FROM node:18-alpine AS build
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ FROM golang:1.24-alpine AS go-build
 WORKDIR /app
 
 # Copy Go modules
-COPY go.mod ./
+COPY go.mod go.sum ./
 
 # Download dependencies
 RUN go mod download

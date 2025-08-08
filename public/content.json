@@ -10,21 +10,21 @@
         "videoId": "VIDEO_ID_FEATURED",
         "title": "First look at Camel-AI multi agent framework",
         "publishedAt": "2025-01-01T12:00:00Z",
-        "thumbnailUrl": "https://i.ytimg.com/vi/3D5uDh13YdY/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCF41aL9vNaEiEEwXgBfiwvXxIASQ",
+        "thumbnailUrl": "https://i.ytimg.com/vi/3D5uDh13YdY/maxresdefault.jpg",
         "url": "https://www.youtube.com/watch?v=3D5uDh13YdY"
       },
       {
         "videoId": "VIDEO_ID_OTHER_1",
         "title": "Medgemma hosted and architecture",
         "publishedAt": "2024-12-29T10:00:00Z",
-        "thumbnailUrl": "https://i.ytimg.com/an_webp/NwTKnTHfZAg/mqdefault_6s.webp?du=3000&sqp=COjw18QG&rs=AOn4CLBA1i6-AjvhVf03b4CkC2v_btm_lQ",
+        "thumbnailUrl": "https://i.ytimg.com/vi/NwTKnTHfZAg/hqdefault.jpg",
         "url": "https://www.youtube.com/watch?v=NwTKnTHfZAg&pp=2AYB"
       },
       {
         "videoId": "VIDEO_ID_OTHER_2",
         "title": "Smolagents framework for agents",
         "publishedAt": "2024-12-25T09:00:00Z",
-        "thumbnailUrl": "https://i.ytimg.com/an_webp/jqC-341kGTA/mqdefault_6s.webp?du=3000&sqp=CMCQ2MQG&rs=AOn4CLBAQrUxRldBRNbpOhoBYA5R88LpmA",
+        "thumbnailUrl": "https://i.ytimg.com/vi/jqC-341kGTA/hqdefault.jpg",
         "url": "https://www.youtube.com/watch?v=jqC-341kGTA&pp=2AYB"
       }
     ]
@@ -55,5 +55,11 @@
       "audience": "Healthtech, biotech, clinicians",
       "link": "https://lu.ma/techbrews"
     }
+  ]
+  ,
+  "brands": [
+    { "name": "Imperial College London", "logo": "/logos/icl.png" },
+    { "name": "Google Cloud", "logo": "/logos/google_cloud.svg" },
+    { "name": "Civo", "logo": "/logos/civo.svg" }
   ]
 }

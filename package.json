@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:docker": "go mod tidy && docker build -t davidtang-ai . && docker run --rm -d --name test-container -p 8080:8080 davidtang-ai && sleep 5 && curl -f http://localhost:8080/api/content && docker stop test-container && echo '✅ Docker test passed!'"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
