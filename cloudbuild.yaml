@@ -30,9 +30,6 @@ steps:
       - '0.5'
       - '--max-instances'
       - '1'
-      - '--service-account'
-      - '586055278165-compute@developer.gserviceaccount.com'
-      - '--startup-probe=timeoutSeconds=10,periodSeconds=10,failureThreshold=3,tcpSocket.port=8080'
       - '--allow-unauthenticated'
 
   

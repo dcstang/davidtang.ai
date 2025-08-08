@@ -1,0 +1,59 @@
+{
+  "site": {
+    "updatedAt": "2025-01-01T00:00:00Z"
+  },
+  "youtube": {
+    "channelUrl": "https://www.youtube.com/@drdavidtang",
+    "featuredVideoId": "VIDEO_ID_FEATURED",
+    "videos": [
+      {
+        "videoId": "VIDEO_ID_FEATURED",
+        "title": "First look at Camel-AI multi agent framework",
+        "publishedAt": "2025-01-01T12:00:00Z",
+        "thumbnailUrl": "https://i.ytimg.com/vi/3D5uDh13YdY/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCF41aL9vNaEiEEwXgBfiwvXxIASQ",
+        "url": "https://www.youtube.com/watch?v=3D5uDh13YdY"
+      },
+      {
+        "videoId": "VIDEO_ID_OTHER_1",
+        "title": "Medgemma hosted and architecture",
+        "publishedAt": "2024-12-29T10:00:00Z",
+        "thumbnailUrl": "https://i.ytimg.com/an_webp/NwTKnTHfZAg/mqdefault_6s.webp?du=3000&sqp=COjw18QG&rs=AOn4CLBA1i6-AjvhVf03b4CkC2v_btm_lQ",
+        "url": "https://www.youtube.com/watch?v=NwTKnTHfZAg&pp=2AYB"
+      },
+      {
+        "videoId": "VIDEO_ID_OTHER_2",
+        "title": "Smolagents framework for agents",
+        "publishedAt": "2024-12-25T09:00:00Z",
+        "thumbnailUrl": "https://i.ytimg.com/an_webp/jqC-341kGTA/mqdefault_6s.webp?du=3000&sqp=CMCQ2MQG&rs=AOn4CLBAQrUxRldBRNbpOhoBYA5R88LpmA",
+        "url": "https://www.youtube.com/watch?v=jqC-341kGTA&pp=2AYB"
+      }
+    ]
+  },
+  "linkedin": {
+    "profileUrl": "https://www.linkedin.com/in/drdavidtang",
+    "posts": [
+      {
+        "embedIframeSrc": "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7334240359897591808?collapsed=1",
+        "postUrl": "https://www.linkedin.com/posts/drdavidtang_tortus-ai-llms-for-medical-text-summarisation-activity-7335202264598417408-pZxy?utm_source=share&utm_medium=member_desktop&rcm=ACoAACgc3LYB_3ZT7MJkVlEKKXbGV6mmZufe4Lw"
+      },
+      {
+        "embedIframeSrc": "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7316611067856515073?collapsed=1",
+        "postUrl": "https://www.linkedin.com/posts/drdavidtang_blueprints-for-clinical-conversational-ai-activity-7316750682621968384-itlf?utm_source=share&utm_medium=member_desktop&rcm=ACoAACgc3LYB_3ZT7MJkVlEKKXbGV6mmZufe4Lwhttps://www.linkedin.com/posts/drdavidtang_blueprints-for-clinical-conversational-ai-activity-7316750682621968384-itlf?utm_source=share&utm_medium=member_desktop&rcm=ACoAACgc3LYB_3ZT7MJkVlEKKXbGV6mmZufe4Lw"
+      }
+    ]
+  },
+  "communities": [
+    {
+      "name": "AICamp London",
+      "summary": "Technical AI community meetups I support in London.",
+      "audience": "Engineers, data, and ML practitioners",
+      "link": "https://www.aicamp.ai/event/eventsquery?organizer=&city=UK-London"
+    },
+    {
+      "name": "Tech Brews",
+      "summary": "Life sciences and healthcare community events.",
+      "audience": "Healthtech, biotech, clinicians",
+      "link": "https://lu.ma/techbrews"
+    }
+  ]
+}

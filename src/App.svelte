@@ -1,13 +1,101 @@
 <script>
   import headshotImage from "./assets/headshot-skyblue.png";
-  const profilePhotoUrl = headshotImage;
+  import { onMount } from "svelte";
 
+  const profilePhotoUrl = headshotImage;
   const linkedinUrl = "https://linkedin.com/in/drdavidtang";
   const youtubeUrl = "https://youtube.com/drdavidtang";
+  const tangibleUrl = "https://tangible.healthcare";
+
+  // Fetch dynamic content via server-side proxy
+  const CONTENT_URL = "/api/content";
+
+  let contentData = null;
+  let isContentLoaded = false;
+  let contentLoadError = null;
+  let isFeaturedVideoPlaying = false;
+
+  onMount(async () => {
+    try {
+      const response = await fetch(CONTENT_URL, { cache: "no-cache" });
+      if (!response.ok) {
+        throw new Error(`Failed to load content: ${response.status}`);
+      }
+      contentData = await response.json();
+    } catch (error) {
+      contentLoadError = error;
+    } finally {
+      isContentLoaded = true;
+    }
+  });
+
+  $: featuredVideoId =
+    contentData?.youtube?.featuredVideoId ||
+    contentData?.youtube?.videos?.[0]?.videoId;
+  $: featuredVideo = (contentData?.youtube?.videos || []).find(
+    (v) => v.videoId === featuredVideoId,
+  );
+  $: otherVideos = (contentData?.youtube?.videos || [])
+    .filter((v) => v.videoId !== featuredVideoId)
+    .slice(0, 2);
+
+  function getYouTubeThumbnailUrl(videoId) {
+    return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+  }
+
+  function getYouTubeEmbedUrl(videoId, autoplay = false) {
+    const base = `https://www.youtube-nocookie.com/embed/${videoId}`;
+    return autoplay ? `${base}?autoplay=1` : base;
+  }
+
+  function getFaviconUrl(link) {
+    try {
+      const u = new URL(link);
+      // Try multiple favicon sources
+      return `${u.origin}/favicon.ico`;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getFaviconFallback(link) {
+    try {
+      const u = new URL(link);
+      if (u.hostname.includes("aicamp.ai")) {
+        return "https://www.aicamp.ai/img/aicamplogo.png";
+      } else if (u.hostname.includes("lu.ma")) {
+        return "https://lu.ma/favicon.ico";
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getAICampIcon(link) {
+    try {
+      const u = new URL(link);
+      if (u.hostname.includes("aicamp.ai")) {
+        return "https://www.aicamp.ai/favicon.ico";
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getDomain(link) {
+    try {
+      const h = new URL(link).hostname;
+      return h.replace(/^www\./, "");
+    } catch (e) {
+      return link;
+    }
+  }
 </script>
 
 <main
-  class="min-h-screen bg-gradient-to-br from-navy-900 via-blue-900 to-slate-900 flex items-center justify-center p-4"
+  class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50 flex items-center justify-center p-4"
 >
   <div class="max-w-4xl mx-auto text-center">
     <!-- AI-themed animated background elements -->
@@ -25,7 +113,7 @@
 
     <!-- Main content -->
     <div
-      class="relative z-10 bg-black/20 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-white/10"
+      class="relative z-10 bg-white/80 backdrop-blur-md rounded-2xl p-8 md:p-12 border border-slate-200 shadow-xl"
     >
       <!-- Profile photo placeholder -->
       <div class="mb-8">
@@ -37,68 +125,46 @@
       </div>
 
       <!-- Name and title -->
-      <h1
-        class="text-4xl md:text-6xl font-bold text-white mb-4 bg-gradient-to-r from-navy-400 to-sky-400 bg-clip-text text-transparent"
-      >
-        David Tang
-      </h1>
+      <div class="mb-8">
+        <h1
+          class="text-4xl md:text-6xl font-bold text-slate-900 mb-2 bg-gradient-to-r from-slate-900 to-sky-700 bg-clip-text text-transparent leading-tight pb-3"
+        >
+          David Tang
+        </h1>
 
-      <h2 class="text-xl md:text-2xl text-navy-200 mb-8">
-        Clinical AI. Built Right.
-      </h2>
-
-      <!-- Tacky AI construction message -->
-      <div
-        class="mb-8 p-6 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-xl border border-yellow-400/30"
-      >
-        <div class="flex items-center justify-center mb-4">
-          <svg
-            class="w-8 h-8 text-yellow-400 mr-3 animate-spin"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-            ></path>
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            ></path>
-          </svg>
-          <span class="text-lg font-semibold text-yellow-300"
-            >🤖 BUSY TRAINING AI FOR CLINICAL USE...</span
-          >
-        </div>
-        <p class="text-yellow-200 text-sm md:text-base font-mono">
-          // SYSTEM STATUS: SITE UNDER CONSTRUCTION<br />
-          // TRAINING ALGORITHMS FOR MAXIMUM AWESOMENESS<br />
-        </p>
+        <h2 class="text-xl md:text-2xl text-slate-600">
+          Clinical AI. Built Right.
+        </h2>
       </div>
 
       <!-- Description -->
-      <p class="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">
-        Thanks for stopping by! I'm currently behind the scenes ...
-      </p>
-      <p class="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">
-        building AI tools for clinicians and healthcare professionals.
-      </p>
-      <p class="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">
-        Check out my LinkedIn and YouTube in the meantime for closer updates.
-      </p>
+      <div class="mb-8 text-center">
+        <p class="text-lg md:text-xl text-slate-700 mb-4 leading-relaxed">
+          I'm building AI tools for clinicians and healthcare professionals,
+          focusing on practical patient-facing applications that are also loved
+          by clinical teams. I do this via my company Tangible.
+        </p>
+        <p class="text-lg md:text-xl text-slate-700 mb-6 leading-relaxed">
+          Connect with me on LinkedIn for industry insights, or check out my
+          YouTube channel for technical deep-dives and tutorials.
+        </p>
+      </div>
 
       <!-- Social links -->
-      <div class="flex justify-center space-x-6">
+      <div class="flex justify-center flex-wrap gap-4">
+        <a
+          href={tangibleUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group flex items-center space-x-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 hover:text-emerald-900 px-6 py-3 rounded-lg border border-emerald-300 hover:border-emerald-400 transition-all duration-300 transform hover:scale-105"
+        >
+          <span>Work with Tangible</span>
+        </a>
         <a
           href={linkedinUrl}
           target="_blank"
           rel="noopener noreferrer"
-          class="group flex items-center space-x-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 hover:text-blue-200 px-6 py-3 rounded-lg border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 transform hover:scale-105"
+          class="group flex items-center space-x-2 bg-blue-100 hover:bg-blue-200 text-blue-800 hover:text-blue-900 px-6 py-3 rounded-lg border border-blue-300 hover:border-blue-400 transition-all duration-300 transform hover:scale-105"
         >
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path
@@ -112,7 +178,7 @@
           href={youtubeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          class="group flex items-center space-x-2 bg-red-600/20 hover:bg-red-600/30 text-red-300 hover:text-red-200 px-6 py-3 rounded-lg border border-red-500/30 hover:border-red-400/50 transition-all duration-300 transform hover:scale-105"
+          class="group flex items-center space-x-2 bg-red-100 hover:bg-red-200 text-red-800 hover:text-red-900 px-6 py-3 rounded-lg border border-red-300 hover:border-red-400 transition-all duration-300 transform hover:scale-105"
         >
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path
@@ -126,15 +192,284 @@
       <!-- Loading animation -->
       <div class="mt-8 flex justify-center">
         <div class="flex space-x-1">
-          <div class="w-2 h-2 bg-navy-400 rounded-full animate-bounce"></div>
+          <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
           <div
             class="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-100"
           ></div>
           <div
-            class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-200"
+            class="w-2 h-2 bg-sky-300 rounded-full animate-bounce delay-200"
           ></div>
         </div>
       </div>
+
+      {#if isContentLoaded}
+        {#if contentLoadError}
+          <p class="mt-6 text-sm text-red-300">
+            Failed to load dynamic content.
+          </p>
+        {:else}
+          <!-- LinkedIn embed section -->
+          {#if contentData?.linkedin?.posts}
+            <section class="mt-12 text-left">
+              <h3
+                class="text-2xl md:text-3xl font-semibold text-slate-900 mb-4"
+              >
+                Latest on LinkedIn
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {#each contentData.linkedin.posts as post}
+                  <div
+                    class="bg-white border border-slate-200 rounded-xl overflow-hidden"
+                  >
+                    <iframe
+                      src={post.embedIframeSrc}
+                      height="566"
+                      width="100%"
+                      frameborder="0"
+                      allowfullscreen=""
+                      title="LinkedIn Post Embed"
+                    />
+                  </div>
+                {/each}
+              </div>
+              <div class="mt-4">
+                <a
+                  href={contentData.linkedin.profileUrl || linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-block bg-blue-100 hover:bg-blue-200 text-blue-800 hover:text-blue-900 px-4 py-2 rounded-lg border border-blue-300 hover:border-blue-400 transition"
+                >
+                  View on LinkedIn
+                </a>
+              </div>
+            </section>
+          {/if}
+
+          <!-- YouTube section -->
+          {#if contentData?.youtube}
+            <section class="mt-12 text-left">
+              <h3
+                class="text-2xl md:text-3xl font-semibold text-slate-900 mb-4"
+              >
+                Latest on YouTube
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Check out my latest AI builds and technical deep-dives.
+              </p>
+
+              <!-- Featured video (thumbnail that click-to-plays) -->
+              <div
+                class="bg-white border border-slate-200 rounded-xl overflow-hidden"
+              >
+                {#if !isFeaturedVideoPlaying}
+                  <button
+                    class="relative w-full block text-left focus:outline-none"
+                    on:click={() => (isFeaturedVideoPlaying = true)}
+                    aria-label="Play featured video"
+                  >
+                    <img
+                      src={featuredVideo?.thumbnailUrl ||
+                        getYouTubeThumbnailUrl(featuredVideoId)}
+                      alt={featuredVideo?.title || "Featured video"}
+                      class="w-full aspect-video object-cover"
+                      loading="lazy"
+                    />
+                    <div
+                      class="absolute inset-0 flex items-center justify-center"
+                    >
+                      <div
+                        class="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur rounded-full flex items-center justify-center border border-white/30"
+                      >
+                        <svg
+                          class="w-8 h-8 text-white"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </button>
+                {:else}
+                  <div class="relative w-full aspect-video">
+                    <iframe
+                      class="w-full h-full"
+                      src={getYouTubeEmbedUrl(featuredVideoId, true)}
+                      title={featuredVideo?.title || "YouTube video player"}
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerpolicy="strict-origin-when-cross-origin"
+                      allowfullscreen
+                    />
+                  </div>
+                {/if}
+                <div class="p-4">
+                  <p class="text-slate-900 font-medium">
+                    {featuredVideo?.title}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Top 2 recent videos -->
+              {#if otherVideos?.length}
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {#each otherVideos as video}
+                    <a
+                      href={video.url ||
+                        `https://www.youtube.com/watch?v=${video.videoId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="block group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition"
+                    >
+                      <img
+                        src={video.thumbnailUrl ||
+                          getYouTubeThumbnailUrl(video.videoId)}
+                        alt={video.title}
+                        class="w-full aspect-video object-cover group-hover:opacity-95"
+                        loading="lazy"
+                      />
+                      <div class="p-3">
+                        <p
+                          class="text-sm text-slate-900 group-hover:text-slate-700"
+                        >
+                          {video.title}
+                        </p>
+                      </div>
+                    </a>
+                  {/each}
+                </div>
+              {/if}
+
+              <div class="mt-6">
+                <a
+                  href={contentData.youtube.channelUrl || youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-block bg-red-100 hover:bg-red-200 text-red-800 hover:text-red-900 px-4 py-2 rounded-lg border border-red-300 hover:border-red-400 transition"
+                >
+                  View all on YouTube
+                </a>
+              </div>
+            </section>
+          {/if}
+
+          <!-- Communities & Events section -->
+          <section class="mt-12 text-left">
+            <h3 class="text-2xl md:text-3xl font-semibold text-slate-900 mb-4">
+              Communities & Events I Support
+            </h3>
+            <p class="text-slate-600 mb-4">
+              Technical and healthtech communities where I help organize or
+              support.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- AICamp card -->
+              <a
+                href={(contentData?.communities || [])[0]?.link ||
+                  "https://www.aicamp.ai/event/eventsquery?organizer=&city=UK-London"}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition shadow-sm hover:shadow-md"
+              >
+                <div class="flex items-stretch">
+                  <div
+                    class="w-24 h-24 flex items-center justify-center bg-slate-50 border-r border-slate-200"
+                  >
+                    <img
+                      src={getAICampIcon(
+                        (contentData?.communities || [])[0]?.link ||
+                          "https://www.aicamp.ai",
+                      )}
+                      alt="AICamp icon"
+                      class="w-8 h-8"
+                      loading="lazy"
+                      on:error={(e) => {
+                        e.target.src = getFaviconFallback(
+                          (contentData?.communities || [])[0]?.link ||
+                            "https://www.aicamp.ai",
+                        );
+                      }}
+                    />
+                  </div>
+                  <div class="p-4 flex-1">
+                    <h4 class="text-slate-900 font-semibold">
+                      {(contentData?.communities || [])[0]?.name ||
+                        "AICamp London"}
+                    </h4>
+                    <p class="text-sm text-slate-600 mt-1">
+                      {(contentData?.communities || [])[0]?.summary ||
+                        "Technical AI community meetups in London."}
+                    </p>
+                    <p class="text-xs text-slate-500 mt-2">
+                      Audience: {(contentData?.communities || [])[0]
+                        ?.audience || "Engineers, data, and ML practitioners"}
+                    </p>
+                    <p class="text-xs text-slate-400 mt-1">
+                      {getDomain(
+                        (contentData?.communities || [])[0]?.link ||
+                          "https://www.aicamp.ai",
+                      )}
+                    </p>
+                  </div>
+                  <div class="p-4 self-start text-sky-600">↗</div>
+                </div>
+              </a>
+
+              <!-- Tech Brews card -->
+              <a
+                href={(contentData?.communities || [])[1]?.link ||
+                  "https://lu.ma/techbrews"}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition shadow-sm hover:shadow-md"
+              >
+                <div class="flex items-stretch">
+                  <div
+                    class="w-24 h-24 flex items-center justify-center bg-slate-50 border-r border-slate-200"
+                  >
+                    <img
+                      src={getFaviconUrl(
+                        (contentData?.communities || [])[1]?.link ||
+                          "https://lu.ma/techbrews",
+                      )}
+                      alt="Tech Brews icon"
+                      class="w-8 h-8"
+                      loading="lazy"
+                      on:error={(e) => {
+                        e.target.src = getFaviconFallback(
+                          (contentData?.communities || [])[1]?.link ||
+                            "https://lu.ma/techbrews",
+                        );
+                      }}
+                    />
+                  </div>
+                  <div class="p-4 flex-1">
+                    <h4 class="text-slate-900 font-semibold">
+                      {(contentData?.communities || [])[1]?.name ||
+                        "Tech Brews"}
+                    </h4>
+                    <p class="text-sm text-slate-600 mt-1">
+                      {(contentData?.communities || [])[1]?.summary ||
+                        "Life sciences and healthcare community events."}
+                    </p>
+                    <p class="text-xs text-slate-500 mt-2">
+                      Audience: {(contentData?.communities || [])[1]
+                        ?.audience || "Healthtech, biotech, clinicians"}
+                    </p>
+                    <p class="text-xs text-slate-400 mt-1">
+                      {getDomain(
+                        (contentData?.communities || [])[1]?.link ||
+                          "https://lu.ma/techbrews",
+                      )}
+                    </p>
+                  </div>
+                  <div class="p-4 self-start text-sky-600">↗</div>
+                </div>
+              </a>
+            </div>
+          </section>
+        {/if}
+      {/if}
     </div>
   </div>
 </main>
