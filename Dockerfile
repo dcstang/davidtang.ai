@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Production stage with Go
-FROM golang:1.21-alpine AS go-build
+FROM golang:1.24-alpine AS go-build
 
 WORKDIR /app
 
