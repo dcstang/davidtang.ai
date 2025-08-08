@@ -76,10 +76,7 @@ vendor/
 # Go workspace file
 go.work
 
-# Go module cache
-go.sum
-
-# IDE files
+ IDE files
 .vscode/
 .idea/
 *.swp
