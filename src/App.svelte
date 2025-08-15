@@ -174,8 +174,10 @@
         <p class="text-lg md:text-xl text-slate-700 mb-4 leading-relaxed">
           I'm building AI tools for clinicians and healthcare professionals,
           focusing on practical patient-facing applications that are also loved
-          by clinical teams. I've set up Tangible as an entity to build these
-          tools.
+          by clinical teams.
+        </p>
+        <p class="text-lg md:text-xl text-slate-700 mb-4 leading-relaxed">
+          Want technical input that is clinically informed? I can help.
         </p>
       </div>
 
@@ -187,7 +189,7 @@
           rel="noopener noreferrer"
           class="group flex items-center space-x-2 px-6 py-3 rounded-lg border text-white transition-all duration-300 transform hover:scale-105 bg-[var(--primary)] hover:bg-[var(--primary-hover)] border-[var(--primary)]"
         >
-          <span>Work with Tangible</span>
+          <span>Work with me</span>
         </a>
         <button
           type="button"
@@ -215,6 +217,10 @@
           these tools myself, and now I'm building Tangible to bring clinical AI
           from prototype to production, with an emphasis on reliability,
           workflow fit, and measurable impact.
+        </p>
+        <p class="text-slate-700 text-base md:text-lg leading-relaxed">
+          I'm mostly on LinkedIn and community events, if you'd like to connect
+          then look below!
         </p>
       </section>
 
@@ -403,6 +409,14 @@
               why I support communities as a platform for people to learn
               organically.
             </p>
+            <p class="text-slate-600 mb-4">
+              Potential synergy, sponsor, or collaborator? <a
+                href="https://tidycal.com/david-tang/30-minute-meeting"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sky-600 hover:text-sky-700 underline">Reach out!</a
+              >
+            </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- AICamp card -->
               <a
@@ -560,11 +574,6 @@
                   </div>
                 {/each}
               </div>
-              <p class="text-xs text-slate-500 mt-4">
-                Logos represent organizations we have previously partnered with
-                and/or worked with. All trademarks are property of their
-                respective owners.
-              </p>
               <div class="mt-4 text-center">
                 <a
                   href={tangibleUrl}
@@ -572,7 +581,7 @@
                   rel="noopener noreferrer"
                   class="inline-flex items-center gap-2 px-5 py-3 rounded-lg border text-white transition bg-[var(--primary)] hover:bg-[var(--primary-hover)] border-[var(--primary)]"
                 >
-                  <span>See more at Tangible</span>
+                  <span>See my consultancy</span>
                 </a>
               </div>
             </section>
@@ -581,6 +590,10 @@
       {/if}
     </div>
   </div>
+  <p class="text-xs text-slate-500 mt-4">
+    Logos represent organizations we have previously partnered with and/or
+    worked with. All trademarks are property of their respective owners.
+  </p>
 </main>
 
 <style>
