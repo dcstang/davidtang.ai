@@ -86,17 +86,18 @@
   }
 
   let communityImages = [];
-  $: (async () => {
+  $: {
     const communities = contentData?.communities || [];
     if (!communities.length) {
       communityImages = [];
-      return;
+    } else {
+      Promise.all(
+        communities.slice(0, 2).map((c) => fetchOpenGraphImage(c.link)),
+      ).then((results) => {
+        communityImages = results;
+      });
     }
-    const results = await Promise.all(
-      communities.slice(0, 2).map((c) => fetchOpenGraphImage(c.link)),
-    );
-    communityImages = results;
-  })();
+  }
 
   function getDomain(link) {
     try {
@@ -207,11 +208,11 @@
         </h3>
         <p class="text-slate-700 text-base md:text-lg leading-relaxed mb-4">
           I'm a clinician by trade, and throughout my practice I have always
-          benefited from using tech to imrpove my work. When I was 15, I
+          benefited from using tech to improve my work. When I was 15, I
           assisted my mothers' GP practice go through a complete digital
           transformation.
         </p>
-        <p class="text-slate-700 text-base md:text-lg leading-relaxed">
+        <p class="text-slate-700 text-base md:text-lg leading-relaxed mb-4">
           That moment changed me, and I've been chasing that transformative
           feeling of digital health for the last 10 years. I've built many of
           these tools myself, and now I'm building Tangible to bring clinical AI
@@ -219,8 +220,8 @@
           workflow fit, and measurable impact.
         </p>
         <p class="text-slate-700 text-base md:text-lg leading-relaxed">
-          I'm mostly on LinkedIn and community events, if you'd like to connect
-          then look below!
+          I'm mostly on LinkedIn and at local community events, if you'd like to
+          connect then look below!
         </p>
       </section>
 
@@ -249,11 +250,12 @@
                   >
                     <iframe
                       src={post.embedIframeSrc}
-                      height="566"
+                      height="400"
                       width="100%"
                       frameborder="0"
                       allowfullscreen=""
                       title="LinkedIn Post Embed"
+                      class="md:h-[566px] h-[410px]"
                     />
                   </div>
                 {/each}
@@ -552,21 +554,22 @@
               >
                 {#each contentData.brands as brand}
                   <div
-                    class="group rounded-xl p-2 md:p-3 flex items-center justify-center h-16 md:h-20"
+                    class="group rounded-xl p-2 md:p-3 flex items-center justify-center h-16 md:h-20 max-w-32"
                     aria-label={brand.name}
                   >
                     {#if brand.logo}
                       <img
                         src={brand.logo}
                         alt={brand.name}
-                        class="h-10 md:h-12 w-auto object-contain opacity-60 group-hover:opacity-100 grayscale group-hover:grayscale-0 transition"
+                        class="h-10 md:h-12 w-auto max-w-full object-contain opacity-60 group-hover:opacity-100 grayscale group-hover:grayscale-0 transition"
                         loading="lazy"
                       />
                     {:else}
                       <div
                         class="w-full h-full flex items-center justify-center text-slate-500"
                       >
-                        <span class="font-semibold text-base md:text-lg"
+                        <span
+                          class="font-semibold text-base md:text-lg text-center"
                           >{getInitials(brand.name)}</span
                         >
                       </div>
@@ -574,26 +577,71 @@
                   </div>
                 {/each}
               </div>
-              <div class="mt-4 text-center">
+              <p class="text-xs text-slate-500 mt-4">
+                Logos represent organizations I have previously partnered with
+                and/or worked with. All trademarks are property of their
+                respective owners.
+              </p>
+            </section>
+          {/if}
+
+          <!-- Call to Action Section -->
+          <section class="mt-16 text-center">
+            <div
+              class="bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-50 rounded-2xl p-8 md:p-12 border border-blue-200 shadow-lg"
+            >
+              <h3
+                class="text-2xl md:text-3xl font-semibold text-slate-900 mb-4"
+              >
+                Ready to build something together?
+              </h3>
+              <p class="text-lg text-slate-700 mb-8 max-w-2xl mx-auto">
+                Whether you're looking to bring clinical AI from prototype to
+                production, or need technical guidance that's clinically
+                informed, I can help.
+              </p>
+              <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
                   href={tangibleUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="inline-flex items-center gap-2 px-5 py-3 rounded-lg border text-white transition bg-[var(--primary)] hover:bg-[var(--primary-hover)] border-[var(--primary)]"
+                  class="inline-flex items-center gap-2 px-8 py-4 rounded-lg border text-white transition-all duration-300 transform hover:scale-105 bg-[var(--primary)] hover:bg-[var(--primary-hover)] border-[var(--primary)] font-semibold text-lg"
                 >
-                  <span>See my consultancy</span>
+                  <span>Start a project</span>
+                  <svg
+                    class="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </a>
+                <a
+                  href={linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 px-8 py-4 rounded-lg border border-slate-300 text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-all duration-300 transform hover:scale-105 font-semibold text-lg"
+                >
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                    />
+                  </svg>
+                  <span>Connect on LinkedIn</span>
                 </a>
               </div>
-            </section>
-          {/if}
+            </div>
+          </section>
         {/if}
       {/if}
     </div>
   </div>
-  <p class="text-xs text-slate-500 mt-4">
-    Logos represent organizations we have previously partnered with and/or
-    worked with. All trademarks are property of their respective owners.
-  </p>
 </main>
 
 <style>
