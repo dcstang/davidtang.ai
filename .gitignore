@@ -100,3 +100,13 @@ Thumbs.db
 url-map*
 /tmp
 notes/
+
+.firebase/
+
+.firebaserc
+firebase.json
+
+CLAUDE.node_modules
+
+public/
+src/assets

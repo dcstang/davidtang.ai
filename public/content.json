@@ -33,12 +33,26 @@
     "profileUrl": "https://www.linkedin.com/in/drdavidtang",
     "posts": [
       {
-        "embedIframeSrc": "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7334240359897591808?collapsed=1",
-        "postUrl": "https://www.linkedin.com/posts/drdavidtang_tortus-ai-llms-for-medical-text-summarisation-activity-7335202264598417408-pZxy?utm_source=share&utm_medium=member_desktop&rcm=ACoAACgc3LYB_3ZT7MJkVlEKKXbGV6mmZufe4Lw"
+        "id": "tortus-post",
+        "title": "TORTUS AI: LLMs for medical text summarisation",
+        "imageUrl": "/images/linkedin-davidtang-tortus-post.webp",
+        "postUrl": "https://www.linkedin.com/posts/drdavidtang_tortus-ai-llms-for-medical-text-summarisation-activity-7335202264598417408-pZxy?utm_source=share&utm_medium=member_desktop&rcm=ACoAACgc3LYB_3ZT7MJkVlEKKXbGV6mmZufe4Lw",
+        "engagement": {
+          "likes": 55,
+          "comments": 12
+        },
+        "publishedAt": "2024-12-20"
       },
       {
-        "embedIframeSrc": "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7316611067856515073?collapsed=1",
-        "postUrl": "https://www.linkedin.com/posts/drdavidtang_blueprints-for-clinical-conversational-ai-activity-7316750682621968384-itlf?utm_source=share&utm_medium=member_desktop&rcm=ACoAACgc3LYB_3ZT7MJkVlEKKXbGV6mmZufe4Lwhttps://www.linkedin.com/posts/drdavidtang_blueprints-for-clinical-conversational-ai-activity-7316750682621968384-itlf?utm_source=share&utm_medium=member_desktop&rcm=ACoAACgc3LYB_3ZT7MJkVlEKKXbGV6mmZufe4Lw"
+        "id": "conversational-ai-post",
+        "title": "Blueprints for clinical conversational AI",
+        "imageUrl": "/images/linkedin-davidtang-conversational-ai-post.webp",
+        "postUrl": "https://www.linkedin.com/posts/drdavidtang_blueprints-for-clinical-conversational-ai-activity-7316750682621968384-itlf?utm_source=share&utm_medium=member_desktop&rcm=ACoAACgc3LYB_3ZT7MJkVlEKKXbGV6mmZufe4Lw",
+        "engagement": {
+          "likes": 61,
+          "comments": 10
+        },
+        "publishedAt": "2024-11-15"
       }
     ]
   },

@@ -1,5 +1,5 @@
 <script>
-  import headshotImage from "./assets/headshot-skyblue.png";
+  import headshotImage from "./assets/davidtang-headshot-skyblue.webp";
   import { onMount } from "svelte";
 
   const profilePhotoUrl = headshotImage;
@@ -7,15 +7,35 @@
   const youtubeUrl = "https://youtube.com/drdavidtang";
   const tangibleUrl = "https://tangible.healthcare";
 
-  // Fetch dynamic content via server-side proxy
-  const CONTENT_URL = "/api/content";
+  // Fetch dynamic content from static JSON file
+  const CONTENT_URL = "/content.json";
 
   let contentData = null;
   let isContentLoaded = false;
   let contentLoadError = null;
   let isFeaturedVideoPlaying = false;
 
+  // Animation intersection observer
+  let observer;
+  let animatedElements = new Set();
+
   onMount(async () => {
+    // Setup intersection observer for animations first
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !animatedElements.has(entry.target)) {
+            entry.target.classList.add('animate-in');
+            animatedElements.add(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
+
     try {
       const response = await fetch(CONTENT_URL, { cache: "no-cache" });
       if (!response.ok) {
@@ -27,6 +47,12 @@
     } finally {
       isContentLoaded = true;
     }
+
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+    };
   });
 
   $: featuredVideoId =
@@ -72,32 +98,8 @@
     }
   }
 
-  // Simple link-preview fetcher to get OpenGraph images
-  async function fetchOpenGraphImage(targetUrl) {
-    try {
-      const u = `/api/link-preview?url=${encodeURIComponent(targetUrl)}`;
-      const res = await fetch(u, { cache: "force-cache" });
-      if (!res.ok) return null;
-      const data = await res.json();
-      return data.image || null;
-    } catch (e) {
-      return null;
-    }
-  }
-
+  // Use fallback images for communities since we no longer have link preview
   let communityImages = [];
-  $: {
-    const communities = contentData?.communities || [];
-    if (!communities.length) {
-      communityImages = [];
-    } else {
-      Promise.all(
-        communities.slice(0, 2).map((c) => fetchOpenGraphImage(c.link)),
-      ).then((results) => {
-        communityImages = results;
-      });
-    }
-  }
 
   function getDomain(link) {
     try {
@@ -123,6 +125,20 @@
       .slice(0, 2)
       .map((n) => n[0].toUpperCase())
       .join("");
+  }
+
+  function observeElement(element) {
+    if (observer && element) {
+      observer.observe(element);
+    }
+
+    return {
+      destroy() {
+        if (observer && element) {
+          observer.unobserve(element);
+        }
+      }
+    };
   }
 </script>
 
@@ -172,12 +188,12 @@
 
       <!-- Description -->
       <div class="mb-8 text-center">
-        <p class="text-lg md:text-xl text-slate-700 mb-4 leading-relaxed">
+        <p class="text-base md:text-lg text-slate-700 mb-4 leading-relaxed">
           I'm building AI tools for clinicians and healthcare professionals,
           focusing on practical patient-facing applications that are also loved
           by clinical teams.
         </p>
-        <p class="text-lg md:text-xl text-slate-700 mb-4 leading-relaxed">
+        <p class="text-base md:text-lg text-slate-700 mb-4 leading-relaxed">
           Want technical input that is clinically informed? I can help.
         </p>
       </div>
@@ -210,14 +226,14 @@
           I'm a clinician by trade, and throughout my practice I have always
           benefited from using tech to improve my work. When I was 15, I
           assisted my mothers' GP practice go through a complete digital
-          transformation.
+          transformation (think complete paperless surgery).
         </p>
         <p class="text-slate-700 text-base md:text-lg leading-relaxed mb-4">
           That moment changed me, and I've been chasing that transformative
           feeling of digital health for the last 10 years. I've built many of
-          these tools myself, and now I'm building Tangible to bring clinical AI
-          from prototype to production, with an emphasis on reliability,
-          workflow fit, and measurable impact.
+          these tools myself, and now I'm a clinical AI consultant continuing to
+          build products from prototype to production, with an emphasis on
+          reliability, workflow fit, and measurable impact.
         </p>
         <p class="text-slate-700 text-base md:text-lg leading-relaxed">
           I'm mostly on LinkedIn and at local community events, if you'd like to
@@ -231,7 +247,7 @@
             Failed to load dynamic content.
           </p>
         {:else}
-          <!-- LinkedIn embed section -->
+          <!-- LinkedIn posts section -->
           {#if contentData?.linkedin?.posts}
             <section class="mt-12 text-left">
               <h3
@@ -239,28 +255,94 @@
               >
                 Latest on LinkedIn
               </h3>
-              <p class="text-slate-600 mb-4">
-                Short weekly posts on clinical AI, product notes, and what I'm
+              <p class="text-slate-600 text-base md:text-lg leading-relaxed mb-4">
+                I engage with the global community in clinical AI regularly.
+                Here are some of my latest posts, product notes, and what I'm
+                looking at, my thoughts on where AI is going and what I'm
                 building.
               </p>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {#each contentData.linkedin.posts as post}
-                  <div
-                    class="bg-white border border-slate-200 rounded-xl overflow-hidden"
+                {#each contentData.linkedin.posts as post, i}
+                  <a
+                    href={post.postUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="block group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition shadow-sm hover:shadow-md animate-on-scroll {i === 0 ? 'animate-delay-100' : 'animate-delay-200'}"
+                    use:observeElement
                   >
-                    <iframe
-                      src={post.embedIframeSrc}
-                      height="400"
-                      width="100%"
-                      frameborder="0"
-                      allowfullscreen=""
-                      title="LinkedIn Post Embed"
-                      class="md:h-[566px] h-[410px]"
-                    />
-                  </div>
+                    <div class="relative h-80">
+                      <img
+                        src={post.imageUrl}
+                        alt={post.title}
+                        class="w-full h-full object-cover group-hover:opacity-95 transition"
+                        loading="lazy"
+                      />
+
+                      <!-- Engagement overlay -->
+                      <div
+                        class="absolute bottom-3 left-3 right-3 flex items-end justify-between"
+                      >
+                        <div class="flex flex-col gap-2">
+                          <!-- Likes -->
+                          <div
+                            class="flex items-center gap-1 bg-white/40 backdrop-blur-sm rounded-full px-3 py-1.5 text-sm font-medium text-slate-700"
+                          >
+                            <svg
+                              class="w-4 h-4 text-red-500"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                            >
+                              <path
+                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                              />
+                            </svg>
+                            <span>{post.engagement?.likes || 0}</span>
+                          </div>
+
+                          <!-- Comments -->
+                          <div
+                            class="flex items-center gap-1 bg-white/40 backdrop-blur-sm rounded-full px-3 py-1.5 text-sm font-medium text-slate-700"
+                          >
+                            <svg
+                              class="w-4 h-4 text-blue-500"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                            >
+                              <path
+                                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                              />
+                            </svg>
+                            <span>{post.engagement?.comments || 0}</span>
+                          </div>
+                        </div>
+
+                        <!-- External link icon -->
+                        <div
+                          class="bg-white/40 backdrop-blur-sm rounded-full p-2"
+                        >
+                          <svg
+                            class="w-4 h-4 text-slate-600 group-hover:text-slate-800"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M14 3h7v7h-2V6.414l-9.293 9.293-1.414-1.414L17.586 5H14V3z"
+                            />
+                            <path
+                              d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2-2v-7h-2v7z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
                 {/each}
               </div>
-              <div class="mt-4 text-center">
+              <div class="mt-6 text-center">
                 <a
                   href={contentData.linkedin.profileUrl || linkedinUrl}
                   target="_blank"
@@ -291,13 +373,14 @@
               >
                 Latest on YouTube
               </h3>
-              <p class="text-slate-600 mb-4">
+              <p class="text-slate-600 text-base md:text-lg leading-relaxed mb-4">
                 Check out my latest AI builds and technical deep-dives.
               </p>
 
               <!-- Featured video (thumbnail that click-to-plays) -->
               <div
-                class="bg-white border border-slate-200 rounded-xl overflow-hidden"
+                class="bg-white border border-slate-200 rounded-xl overflow-hidden animate-on-scroll animate-delay-300"
+                use:observeElement
               >
                 {#if !isFeaturedVideoPlaying}
                   <button
@@ -351,13 +434,14 @@
               <!-- Top 2 recent videos -->
               {#if otherVideos?.length}
                 <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {#each otherVideos as video}
+                  {#each otherVideos as video, i}
                     <a
                       href={video.url ||
                         `https://www.youtube.com/watch?v=${video.videoId}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="block group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition"
+                      class="block group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition animate-on-scroll {i === 0 ? 'animate-delay-400' : 'animate-delay-500'}"
+                      use:observeElement
                     >
                       <img
                         src={video.thumbnailUrl ||
@@ -406,12 +490,14 @@
             <h3 class="text-2xl md:text-3xl font-semibold text-slate-900 mb-4">
               Communities & Events I Support
             </h3>
-            <p class="text-slate-600 mb-4">
+            <p class="text-slate-600 text-base md:text-lg leading-relaxed mb-4">
               Knowledge should be shared freely, not siloed or gatekept. That is
-              why I support communities as a platform for people to learn
-              organically.
+              why I support open communities as a platform for people to learn
+              organically. I am the founding member of Tech Brews London, and
+              lead the London chapter of AICamp. <br /> Have a look and join in a
+              growing global movement of AI practitioners.
             </p>
-            <p class="text-slate-600 mb-4">
+            <p class="text-slate-600 text-base md:text-lg leading-relaxed mb-4">
               Potential synergy, sponsor, or collaborator? <a
                 href="https://tidycal.com/david-tang/30-minute-meeting"
                 target="_blank"
@@ -426,29 +512,29 @@
                   "https://www.aicamp.ai/event/eventsquery?organizer=&city=UK-London"}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="block group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition shadow-sm hover:shadow-md"
+                class="block group border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition shadow-sm hover:shadow-md animate-on-scroll animate-delay-100"
+                use:observeElement
               >
-                <div class="relative">
-                  {#if communityImages?.[0]}
-                    <div
-                      class="w-full h-32 bg-cover bg-center"
-                      style="background-image: url('{communityImages[0]}')"
-                    ></div>
-                  {:else}
-                    <div
-                      class="w-full h-32 bg-gradient-to-r from-slate-100 to-slate-200 flex items-center justify-center"
-                    >
-                      <span class="text-slate-400 text-sm">AICamp</span>
-                    </div>
-                  {/if}
-                  <div class="p-4">
-                    <div class="flex items-center justify-between gap-2">
-                      <h4 class="text-slate-900 font-semibold">
-                        {(contentData?.communities || [])[0]?.name ||
-                          "AICamp London"}
-                      </h4>
+                <div
+                  class="relative h-48 bg-cover bg-center"
+                  style="background-image: url('/images/aicamp-bg.webp'), linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);"
+                >
+                  <!-- Dark overlay for text readability -->
+                  <div
+                    class="absolute inset-0 bg-gradient-to-br from-black/60 via-black/30 to-transparent group-hover:bg-gradient-to-r group-hover:from-black/40 group-hover:via-black/20 group-hover:to-transparent transition-all duration-500 ease-in-out"
+                  ></div>
+
+                  <!-- Content overlay -->
+                  <div
+                    class="relative h-full p-4 flex flex-col justify-between text-white"
+                  >
+                    <div class="flex items-start justify-between gap-2">
+                      <p class="text-sm text-white/90">
+                        {(contentData?.communities || [])[0]?.audience ||
+                          "Engineers, data, and ML practitioners"}
+                      </p>
                       <svg
-                        class="w-4 h-4 shrink-0 text-sky-600 group-hover:text-sky-700"
+                        class="w-5 h-5 shrink-0 text-white/80 group-hover:text-white"
                         viewBox="0 0 24 24"
                         fill="currentColor"
                         aria-hidden="true"
@@ -462,20 +548,15 @@
                         />
                       </svg>
                     </div>
-                    <p class="text-sm text-slate-600 mt-1">
-                      {(contentData?.communities || [])[0]?.summary ||
-                        "Technical AI community meetups in London."}
-                    </p>
-                    <p class="text-xs text-slate-500 mt-2">
-                      Audience: {(contentData?.communities || [])[0]
-                        ?.audience || "Engineers, data, and ML practitioners"}
-                    </p>
-                    <p class="text-xs text-slate-400 mt-1">
-                      {getDomain(
-                        (contentData?.communities || [])[0]?.link ||
-                          "https://www.aicamp.ai",
-                      )}
-                    </p>
+
+                    <div class="mt-auto">
+                      <p class="text-sm text-white/80 font-medium">
+                        {getDomain(
+                          (contentData?.communities || [])[0]?.link ||
+                            "https://www.aicamp.ai",
+                        )}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </a>
@@ -486,29 +567,29 @@
                   "https://lu.ma/techbrews"}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="block group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition shadow-sm hover:shadow-md"
+                class="block group border border-slate-200 rounded-xl overflow-hidden hover:border-slate-300 transition shadow-sm hover:shadow-md animate-on-scroll animate-delay-200"
+                use:observeElement
               >
-                <div class="relative">
-                  {#if communityImages?.[1]}
-                    <div
-                      class="w-full h-32 bg-cover bg-center"
-                      style="background-image: url('{communityImages[1]}')"
-                    ></div>
-                  {:else}
-                    <div
-                      class="w-full h-32 bg-gradient-to-r from-slate-100 to-slate-200 flex items-center justify-center"
-                    >
-                      <span class="text-slate-400 text-sm">Tech Brews</span>
-                    </div>
-                  {/if}
-                  <div class="p-4">
-                    <div class="flex items-center justify-between gap-2">
-                      <h4 class="text-slate-900 font-semibold">
-                        {(contentData?.communities || [])[1]?.name ||
-                          "Tech Brews"}
-                      </h4>
+                <div
+                  class="relative h-48 bg-cover bg-center"
+                  style="background-image: url('/images/techbrews-bg.webp'), linear-gradient(135deg, #059669 0%, #0891b2 100%);"
+                >
+                  <!-- Dark overlay for text readability -->
+                  <div
+                    class="absolute inset-0 bg-gradient-to-br from-black/60 via-black/30 to-transparent group-hover:bg-gradient-to-r group-hover:from-black/40 group-hover:via-black/20 group-hover:to-transparent transition-all duration-500 ease-in-out"
+                  ></div>
+
+                  <!-- Content overlay -->
+                  <div
+                    class="relative h-full p-4 flex flex-col justify-between text-white"
+                  >
+                    <div class="flex items-start justify-between gap-2">
+                      <p class="text-sm text-white/90">
+                        {(contentData?.communities || [])[1]?.audience ||
+                          "Healthtech, biotech, clinicians"}
+                      </p>
                       <svg
-                        class="w-4 h-4 shrink-0 text-sky-600 group-hover:text-sky-700"
+                        class="w-5 h-5 shrink-0 text-white/80 group-hover:text-white"
                         viewBox="0 0 24 24"
                         fill="currentColor"
                         aria-hidden="true"
@@ -522,20 +603,15 @@
                         />
                       </svg>
                     </div>
-                    <p class="text-sm text-slate-600 mt-1">
-                      {(contentData?.communities || [])[1]?.summary ||
-                        "Life sciences and healthcare community events."}
-                    </p>
-                    <p class="text-xs text-slate-500 mt-2">
-                      Audience: {(contentData?.communities || [])[1]
-                        ?.audience || "Healthtech, biotech, clinicians"}
-                    </p>
-                    <p class="text-xs text-slate-400 mt-1">
-                      {getDomain(
-                        (contentData?.communities || [])[1]?.link ||
-                          "https://lu.ma/techbrews",
-                      )}
-                    </p>
+
+                    <div class="mt-auto">
+                      <p class="text-sm text-white/80 font-medium">
+                        {getDomain(
+                          (contentData?.communities || [])[1]?.link ||
+                            "https://lu.ma/techbrews",
+                        )}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </a>
@@ -552,10 +628,12 @@
               <div
                 class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 items-center"
               >
-                {#each contentData.brands as brand}
+                {#each contentData.brands as brand, i}
                   <div
-                    class="group rounded-xl p-2 md:p-3 flex items-center justify-center h-16 md:h-20 max-w-32"
+                    class="group rounded-xl p-2 md:p-3 flex items-center justify-center h-16 md:h-20 max-w-32 animate-on-scroll"
+                    style="transition-delay: {(i + 1) * 100}ms"
                     aria-label={brand.name}
+                    use:observeElement
                   >
                     {#if brand.logo}
                       <img
@@ -648,5 +726,47 @@
   :global(:root) {
     --primary: #0b3767; /* deep dark blue */
     --primary-hover: #0d447c;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .animate-on-scroll:global(.animate-in) {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .animate-delay-100 {
+    transition-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    transition-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    transition-delay: 300ms;
+  }
+
+  .animate-delay-400 {
+    transition-delay: 400ms;
+  }
+
+  .animate-delay-500 {
+    transition-delay: 500ms;
   }
 </style>

@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "test:docker": "go mod tidy && docker build -t davidtang-ai . && docker run --rm -d --name test-container -p 8080:8080 davidtang-ai && sleep 5 && curl -f http://localhost:8080/api/content && docker stop test-container && echo '✅ Docker test passed!'"
+    "preview": "vite preview"
   },
   "devDependencies": {
+    "@sveltejs/adapter-static": "^3.0.9",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.32",
